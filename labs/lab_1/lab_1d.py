@@ -8,6 +8,19 @@ You may assume that each input would have exactly one solution, and you may not 
 Derived from LeetCode problem: https://leetcode.com/problems/two-sum/ (leetcode easy)
 """
 
+def binary_search_left(a, x):
+    l = 0
+    r = len(a) - 1
+    while l < r:
+        mid = (l + r) // 2
+        if a[mid][0] < x:
+            l = mid + 1
+        else:
+            r = mid
+    
+    return l if a[l][0] == x else -1
+
+
 # TODO: Find and resolve the bug in the following implementation. Create unit tests to verify your fix.
 def two_sum(nums: list[int], target: int) -> list[int]:
     """
@@ -21,17 +34,18 @@ def two_sum(nums: list[int], target: int) -> list[int]:
         list[int]: Indices of the two numbers that add up to the target.
     """
 
-    num_to_index = {}
-    for index, num in enumerate(nums):
-        complement = target + num
-        if complement in num_to_index:
-            return [num_to_index[complement], index]
-        num_to_index[num] = index
+    newNums = [(num, i) for i, num in enumerate(nums)]
+    newNums.sort(key=lambda x: (x[0], x[1]))
+    for i, item in enumerate(newNums):
+        search = binary_search_left(newNums, target - item[0])
+        if search != -1 and i != search:
+            return [newNums[i][1], newNums[search][1]]
+
     return []  # In case there is no solution, though the problem guarantees one exists.
 
 # Example usage:
 def main():
-    nums = [2, 7, 11, 15]
+    nums = [11, 7, 13, 2]
     target = 9
     result = two_sum(nums, target)
     print(f"Indices of the two numbers that add up to {target}: {result}")
